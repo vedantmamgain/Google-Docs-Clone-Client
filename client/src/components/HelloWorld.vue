@@ -46,6 +46,7 @@ export default {
   components: { TiptapVuetify },
   data: () => ({
     // declare extensions you want to use
+    name: "HelloWorld",
     extensions: [
       History,
       Table,
