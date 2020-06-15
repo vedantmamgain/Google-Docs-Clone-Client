@@ -1,21 +1,6 @@
 <template>
   <v-app id="inspire">
-    <v-navigation-drawer v-model="drawer" app clipped>
-      <v-list dense>
-        <v-list-item v-for="item in items" :key="item.text" link @click="dialog = true">
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>{{ item.text }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-
     <v-app-bar app clipped-left color="white" dense>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-
       <v-spacer />
       <v-spacer />
       <v-row align="center">
@@ -72,39 +57,25 @@
 
     <v-content>
       <v-toolbar color="black" dark>
-        <v-toolbar-title>Document 1</v-toolbar-title>
+        <v-toolbar-title>{{documentName}}</v-toolbar-title>
 
         <v-spacer></v-spacer>
-        <v-btn icon>
+        <v-btn icon @click="fullscreenEditor">
           <v-icon>mdi-fullscreen</v-icon>
         </v-btn>
         <v-btn icon>
           <v-icon>mdi-account-switch</v-icon>
         </v-btn>
 
-        <v-btn icon>
+        <v-btn icon @click="printDocument">
           <v-icon>mdi-printer</v-icon>
         </v-btn>
         <v-btn icon>
           <v-icon>mdi-magnify</v-icon>
         </v-btn>
       </v-toolbar>
-      <HelloWorld />
+      <EditorFile />
     </v-content>
-
-    <v-dialog v-model="dialog" max-width="300">
-      <v-card>
-        <v-card-title class="headline">New Document</v-card-title>
-        <v-text-field></v-text-field>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-
-          <v-btn color="green darken-1" text @click="dialog = false">Disagree</v-btn>
-
-          <v-btn color="green darken-1" text @click="dialog = false">Agree</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
 
     <v-dialog v-model="loginDialog" max-width="300">
       <v-card>
@@ -126,22 +97,43 @@
 
 
 <script>
-import HelloWorld from "./components/HelloWorld";
+import { bus } from "./main";
+import screenfull from "screenfull";
+import EditorFile from "./components/EditorFile";
+
 export default {
   data: () => ({
-    dialog: false,
-    loginDialog: false,
-    drawer: null,
-    items: [
-      { icon: "mdi-file-document", text: "New Document" }
-      // { icon: "mdi-help", text: "How it Works" },
-      // { icon: "mdi-buffer", text: "Technology used" },
-      // { icon: "mdi-email", text: "Contact Me" }
-    ]
+    editorContent: "",
+    documentName: "Document 1",
+    loginDialog: false
   }),
-  components: { HelloWorld },
+  components: { EditorFile },
   created() {
     this.$vuetify.theme.dark = false; //isse hum dark aur light theme mein switch karenge
+
+    bus.$on("Content", data => {
+      this.editorContent = data;
+    });
+  },
+  methods: {
+    fullscreenEditor() {
+      if (screenfull.isEnabled) {
+        screenfull.request(this.EditorFile);
+      }
+    },
+    printDocument() {
+      bus.$emit("updateContent", this.editorContent);
+      var mywindow = window.open("", "my div", "height=400,width=600");
+      mywindow.document.write("<html><head><title>my div</title>"); //mywindow.document.write('<link rel="stylesheet" href="main.css" type="text/css" />');
+      /*optional stylesheet*/ mywindow.document.write("</head><body >");
+      mywindow.document.write(this.editorContent);
+      mywindow.document.write("</body></html>");
+
+      mywindow.print();
+      mywindow.close();
+
+      return true;
+    }
   }
 };
 </script>
