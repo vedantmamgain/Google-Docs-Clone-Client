@@ -102,6 +102,7 @@ import screenfull from "screenfull";
 import EditorFile from "./components/EditorFile";
 
 export default {
+  name: "App",
   data: () => ({
     editorContent: "",
     documentName: "Document 1",
@@ -110,7 +111,6 @@ export default {
   components: { EditorFile },
   created() {
     this.$vuetify.theme.dark = false; //isse hum dark aur light theme mein switch karenge
-
     bus.$on("Content", data => {
       this.editorContent = data;
     });

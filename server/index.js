@@ -26,24 +26,21 @@ app.use(function (req, res, next) {
 app.use(morgan("dev"));
 app.use(express.json());
 app.use("/api/v1/docu/", documentRoute);
-//Socket Events
 
 io.on("connection", (socket) => {
-  //Connect
   console.log(`${socket.id} was connected`);
 
-  //send data
-  socket.on("send", (data) => {
-    emitTo(data);
-  });
+  socket.on("join", (room) => {
+    socket.join(room);
 
-  socket.on("documentRoom", (data) => {
-    socket.join(data);
-  });
+    socket.on("send", (data) => {
+      emitTo(data);
+    });
 
-  function emitTo(data) {
-    socket.broadcast.emit("update", data);
-  }
+    function emitTo(data) {
+      socket.broadcast.to(room).emit("update", data);
+    }
+  });
 
   //Disconnect
   socket.on("disconnect", () => {

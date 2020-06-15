@@ -1,10 +1,10 @@
 import axios from "axios";
 
 const state = {
-  response: [],
+  document: {},
 };
 const getters = {
-  getResponse: (state) => state.response,
+  getResponse: (state) => state.document,
 };
 const actions = {
   async addDocu({ commit }, name, content, editableProperty) {
@@ -13,12 +13,12 @@ const actions = {
       content: content,
       editableProperty: editableProperty,
     });
-    console.log(response.data.document);
+
     commit("addDocument", response.data);
   },
 };
 const mutations = {
-  addDocument: (state, responseData) => (state.response = responseData),
+  addDocument: (state, responseData) => (state.document = responseData),
 };
 export default {
   state,

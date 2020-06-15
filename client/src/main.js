@@ -1,5 +1,5 @@
 import Vue from "vue";
-import first from "./first";
+import home from "./home";
 import store from "./store";
 import router from "./router";
 import vuetify from "./plugins/vuetify";
@@ -20,5 +20,5 @@ new Vue({
   store,
   router,
   vuetify,
-  render: (h) => h(first),
+  render: (h) => h(home),
 }).$mount("#app");

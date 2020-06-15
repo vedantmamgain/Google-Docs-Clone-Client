@@ -38,27 +38,38 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions } from "vuex";
 export default {
   data: () => ({
-    name: ""
+    name: "",
+    stat: ""
   }),
   props: {
     source: String
   },
-  computed: {
-    ...mapGetters(["getResponse"])
-  },
-  created() {
-    mapActions["addDocu"];
-  },
+  created() {},
   methods: {
     ...mapActions(["addDocu"]),
     createDocument() {
       const nameofDocument = this.name;
-      this.getResponse;
       this.addDocu(nameofDocument, "", true);
     }
+  },
+  mounted() {
+    this.$store.subscribe((mutation, state) => {
+      switch (mutation.type) {
+        case "addDocument": {
+          const status = state.document;
+          if (status.document.status === "sucess") {
+            this.$router.push({
+              name: "editor",
+              query: { documentID: status.document.document._id }
+            });
+          }
+          break;
+        }
+      }
+    });
   }
 };
 </script>
