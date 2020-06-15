@@ -1,18 +1,14 @@
 const express = require("express");
-const expressServer = require("http").createServer(express);
+const app = express();
+const expressServer = require("http").createServer(app);
 const io = require("socket.io")(expressServer);
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const morgan = require("morgan");
 const documentRoute = require("./routes/documentRoute");
-const app = express();
+
 //Initial config
-
-app.use("/api/v1/docu/", documentRoute);
-
-app.use(morgan("dev"));
-app.use(express.json());
 
 app.use(cors());
 
@@ -27,6 +23,9 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.use(morgan("dev"));
+app.use(express.json());
+app.use("/api/v1/docu/", documentRoute);
 //Socket Events
 
 io.on("connection", (socket) => {
@@ -68,7 +67,3 @@ const port = process.env.port || 8000;
 expressServer.listen(port, () => {
   console.log(`App running on port ${port}...`);
 });
-
-// app.listen(8088, () => {
-//   console.log(`App running on port 8088...`);
-// });

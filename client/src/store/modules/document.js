@@ -8,13 +8,13 @@ const getters = {
 };
 const actions = {
   async addDocu({ commit }, name, content, editableProperty) {
-    const response = await axios.post("http://localhost:8088/api/v1/docu/", {
+    const response = await axios.post("http://localhost:8000/api/v1/docu/", {
       name: name,
       content: content,
       editableProperty: editableProperty,
     });
-    console.log(response.data.data.document);
-    commit("addDocument", response.data.data.document);
+    console.log(response.data.document);
+    commit("addDocument", response.data);
   },
 };
 const mutations = {
