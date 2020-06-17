@@ -63,7 +63,7 @@ It uses the tiptap-vuetify to render the editor and socketio for Real Time colla
 
 ## Architecture
 
-The backend of this web app uses [**_MVC (Model View Controller)_**](https://www.geeksforgeeks.org/model-view-controllermvc-architecture-for-node-applications/) architecture.
+The backend of this web app uses [**_MVC (Model View Controller)_**](https://www.geeksforgeeks.org/model-view-controllermvc-architecture-for-node-applications/) architecture. You are free to changes the routes,controller have your own database or schema as everything is seperated.
 
 ![](https://mdn.mozillademos.org/files/14456/MVC%20Express.png)
 
