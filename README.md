@@ -13,7 +13,7 @@ This is Google Docs Clone built tp demonstrate use of _Vue_ as the front end fra
 
 ## About
 
-It simply loads **Posts** data from API and stores it in persistence storage (i.e. SQLite Database). Posts will be always loaded from local database. Remote data (from API) and Local data is always synchronized.
+It uses the tiptap-vuetify to render the editor and socketio for Real Time collabration. MongoDB is used as the database and Mongoose for modelling the documents.For all the requests and stae management Vuex is used.
 
 - This makes it offline capable 😃.
 - Clean and Simple Material UI.
