@@ -1,6 +1,6 @@
 ![](media/sample1.jpg)
 
-# Google Docs Clone 🍲
+# Google Docs Clone 📝
 
 [![GitHub license](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![Github Followers](https://img.shields.io/github/followers/vedantmamgain?label=Follow&style=social)
