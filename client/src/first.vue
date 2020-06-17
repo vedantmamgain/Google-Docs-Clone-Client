@@ -47,20 +47,23 @@ export default {
   props: {
     source: String
   },
-  created() {},
   methods: {
     ...mapActions(["addDocu"]),
+    //Saving the document as soon as the save button is pressed .Using the addDocu action to make a post request on the backend witht the document object to save the file
     createDocument() {
       const nameofDocument = this.name;
       this.addDocu(nameofDocument, "", true);
     }
   },
+
   mounted() {
+    //Subscrbing to the mutation where our document changes its properties. This allows us to know when a change has been made
     this.$store.subscribe((mutation, state) => {
       switch (mutation.type) {
         case "addDocument": {
           const status = state.document;
           if (status.document.status === "sucess") {
+            //as soon as out document status changes to sucess we use router to push to a new route with documentID as the query which is the documentId of our document which has been saved.This unique documentID is the id of the rooom that we will join
             this.$router.push({
               name: "editor",
               query: { documentID: status.document.document._id }

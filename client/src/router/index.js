@@ -6,6 +6,7 @@ import first from "../first.vue";
 Vue.use(VueRouter);
 
 const routes = [
+  //Defining our different routes with their compoenents
   {
     path: "/editor",
     name: "editor",

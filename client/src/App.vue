@@ -110,12 +110,14 @@ export default {
   }),
   components: { EditorFile },
   created() {
-    this.$vuetify.theme.dark = false; //isse hum dark aur light theme mein switch karenge
+    this.$vuetify.theme.dark = false; //to toggle between dark and light theme
+    //This is used to send the content from the editorComponent to here to print the document
     bus.$on("Content", data => {
       this.editorContent = data;
     });
   },
   methods: {
+    //Using the fullscreen library to make the document go fullscreen
     fullscreenEditor() {
       if (screenfull.isEnabled) {
         screenfull.request(this.EditorFile);
@@ -123,6 +125,7 @@ export default {
     },
     printDocument() {
       bus.$emit("updateContent", this.editorContent);
+      //printing the document using the .print() method on a window we created and populated with the content of the page
       var mywindow = window.open("", "my div", "height=400,width=600");
       mywindow.document.write("<html><head><title>my div</title>"); //mywindow.document.write('<link rel="stylesheet" href="main.css" type="text/css" />');
       /*optional stylesheet*/ mywindow.document.write("</head><body >");

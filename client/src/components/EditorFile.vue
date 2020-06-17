@@ -187,21 +187,24 @@ export default {
     // }
   },
   created: function() {
+    //as soon as document is created we emit join event to join the room with id as the document id of the document
     this.$socket.emit("join", this.$route.query.documentID),
+      //when the server of the different user's sends data in the updateContent event we update the content in our frontend
       bus.$on("updateContent", data => {
         data = this.content;
         bus.$emit("Content", data);
       });
     console.log(this.$route.query.documentID);
-    // window.addEventListener("keydown", this.onkeydown);
-  }, //This is done to attach the listener before the render
+  },
 
   mounted: function() {
+    //when the content is changed the update event is emitted to our server which contains the content of our frontend
     this.$socket.on("update", data => {
       this.content = data;
     });
   },
   watch: {
+    //Better to use watcher than using keydown event listener as we can copy paste the data as well and that would go unoticed in keydown event listener
     content: function(value) {
       this.$socket.emit("send", value);
     }

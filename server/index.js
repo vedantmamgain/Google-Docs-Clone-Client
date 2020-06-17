@@ -10,6 +10,7 @@ const documentRoute = require("./routes/documentRoute");
 
 //Initial config
 
+//Setting up cors and passsing the options to allow cross browser commumication
 app.use(cors());
 
 app.use(function (req, res, next) {
@@ -23,14 +24,16 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use(morgan("dev"));
+app.use(morgan("dev")); //console logs all of the REST requests with time
 app.use(express.json());
 app.use("/api/v1/docu/", documentRoute);
 
+//Setting up socketio for real time collabration
 io.on("connection", (socket) => {
   console.log(`${socket.id} was connected`);
-
+  //as soon as join event is recieved we enter this block of code
   socket.on("join", (room) => {
+    //Joining a unique room for every unique document to allow mutiple users to work on multiple documents at the same time
     socket.join(room);
 
     socket.on("send", (data) => {
@@ -38,6 +41,7 @@ io.on("connection", (socket) => {
     });
 
     function emitTo(data) {
+      //Sending the dara from our server to other user's front end
       socket.broadcast.to(room).emit("update", data);
     }
   });
@@ -47,9 +51,10 @@ io.on("connection", (socket) => {
     console.log(`${socket.id} was disconnected`);
   });
 });
-
+//Our dotenv file consists of configuration for our project
 dotenv.config({ path: "./config.env" });
 
+//Connecting with our local mongodb database
 const DB = process.env.DATABASE_LOCAL;
 mongoose
   .connect(DB, {
