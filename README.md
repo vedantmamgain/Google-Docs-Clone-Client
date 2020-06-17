@@ -15,7 +15,6 @@ This is Google Docs Clone built tp demonstrate use of _Vue_ as the front end fra
 
 It uses the tiptap-vuetify to render the editor and socketio for Real Time collabration. MongoDB is used as the database and Mongoose for modelling the documents.For all the requests and stae management Vuex is used.
 
-- This makes it offline capable 😃.
 - Clean and Simple Material UI.
 - It supports dark theme too 🌗.
 
