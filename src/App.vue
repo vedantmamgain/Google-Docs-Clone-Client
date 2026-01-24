@@ -74,7 +74,7 @@
           <v-icon>mdi-magnify</v-icon>
         </v-btn>
       </v-toolbar>
-      <EditorFile />
+      <EditorFile ref="editorFile" />
     </v-content>
 
     <v-dialog v-model="loginDialog" max-width="300">
@@ -85,9 +85,9 @@
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn color="green darken-1" text @click="dialog = false">Cancel</v-btn>
+          <v-btn color="green darken-1" text @click="loginDialog = false">Cancel</v-btn>
 
-          <v-btn color="green darken-1" text @click="dialog = false">Login</v-btn>
+          <v-btn color="green darken-1" text @click="loginDialog = false">Login</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -120,7 +120,8 @@ export default {
     //Using the fullscreen library to make the document go fullscreen
     fullscreenEditor() {
       if (screenfull.isEnabled) {
-        screenfull.request(this.EditorFile);
+        const editorElement = this.$refs.editorFile?.$el || document.documentElement;
+        screenfull.request(editorElement);
       }
     },
     printDocument() {

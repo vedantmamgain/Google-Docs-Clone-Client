@@ -23,12 +23,18 @@
                   prepend-icon="mdi-file"
                   type="text"
                   v-model="name"
+                  :disabled="loading"
                 ></v-text-field>
+                <v-alert v-if="errorMessage" type="error" dismissible @input="errorMessage = ''" class="mt-3">
+                  {{ errorMessage }}
+                </v-alert>
               </v-form>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="primary" @click="createDocument">Create</v-btn>
+              <v-btn color="primary" @click="createDocument" :loading="loading" :disabled="loading || !name.trim()">
+                Create
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -42,7 +48,9 @@ import { mapActions } from "vuex";
 export default {
   data: () => ({
     name: "",
-    stat: ""
+    stat: "",
+    loading: false,
+    errorMessage: ""
   }),
   props: {
     source: String
@@ -50,24 +58,60 @@ export default {
   methods: {
     ...mapActions(["addDocu"]),
     //Saving the document as soon as the save button is pressed .Using the addDocu action to make a post request on the backend witht the document object to save the file
-    createDocument() {
-      const nameofDocument = this.name;
-      this.addDocu(nameofDocument, "", true);
+    async createDocument() {
+      if (!this.name.trim()) {
+        this.errorMessage = "Please enter a document name";
+        return;
+      }
+      
+      this.loading = true;
+      this.errorMessage = "";
+      
+      try {
+        const nameofDocument = this.name;
+        const result = await this.addDocu({ name: nameofDocument, content: "", editableProperty: true });
+        
+        console.log("Document creation result:", result);
+        
+        // Check if document was created successfully
+        if (result && result.document) {
+          const docStatus = result.document.status;
+          const docData = result.document.document;
+          
+          if (docStatus === "sucess" && docData && docData._id) {
+            // Reset loading state
+            this.loading = false;
+            // Navigate immediately
+            this.$router.push({
+              name: "editor",
+              query: { documentID: docData._id }
+            });
+          } else {
+            throw new Error("Invalid response structure");
+          }
+        } else {
+          throw new Error("No document data received");
+        }
+      } catch (error) {
+        console.error("Error in createDocument:", error);
+        this.errorMessage = error.message || "Failed to create document. Please try again.";
+        this.loading = false;
+      }
     }
   },
 
   mounted() {
     //Subscrbing to the mutation where our document changes its properties. This allows us to know when a change has been made
+    // Note: Navigation is now handled directly in createDocument, but we keep this as a backup
     this.$store.subscribe((mutation, state) => {
       switch (mutation.type) {
         case "addDocument": {
           const status = state.document;
-          if (status.document.status === "sucess") {
-            //as soon as out document status changes to sucess we use router to push to a new route with documentID as the query which is the documentId of our document which has been saved.This unique documentID is the id of the rooom that we will join
-            this.$router.push({
-              name: "editor",
-              query: { documentID: status.document.document._id }
-            });
+          
+          if (status && status.document && status.document.status === "error") {
+            // Handle error state from store
+            this.errorMessage = status.document.error || "Failed to create document";
+            this.loading = false;
           }
           break;
         }

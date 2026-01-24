@@ -57,6 +57,9 @@
     "last 2 versions",
     "not dead"
   ],
+  "overrides": {
+    "fsevents": "^2.3.2"
+  },
   "_id": "opensoceditor@1.0.0",
   "bugs": {
     "url": "https://github.com/vedantmamgain/opensoceditor/issues"

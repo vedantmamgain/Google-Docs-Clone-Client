@@ -187,14 +187,26 @@ export default {
     // }
   },
   created: function() {
-    //as soon as document is created we emit join event to join the room with id as the document id of the document
-    this.$socket.emit("join", this.$route.query.documentID),
-      //when the server of the different user's sends data in the updateContent event we update the content in our frontend
-      bus.$on("updateContent", data => {
-        data = this.content;
-        bus.$emit("Content", data);
+    // Frontend-only: Load document from localStorage
+    const documentId = this.$route.query.documentID;
+    if (documentId) {
+      this.$socket.emit("join", documentId);
+      
+      // Load document content from store/localStorage
+      this.$store.dispatch("loadDocument", documentId).then((doc) => {
+        if (doc && doc.content) {
+          this.content = doc.content;
+        }
+      }).catch((error) => {
+        console.error("Error loading document:", error);
       });
-    console.log(this.$route.query.documentID);
+    }
+    
+    //when the server of the different user's sends data in the updateContent event we update the content in our frontend
+    bus.$on("updateContent", data => {
+      this.content = data;
+      bus.$emit("Content", data);
+    });
   },
 
   mounted: function() {
@@ -206,7 +218,13 @@ export default {
   watch: {
     //Better to use watcher than using keydown event listener as we can copy paste the data as well and that would go unoticed in keydown event listener
     content: function(value) {
-      this.$socket.emit("send", value);
+      // Frontend-only: Save content to localStorage via store
+      const documentId = this.$route.query.documentID;
+      if (documentId && value) {
+        this.$socket.emit("send", value);
+        // Also save to localStorage for persistence
+        this.$store.dispatch("updateDocument", { documentId, content: value });
+      }
     }
   }
 };
